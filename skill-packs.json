@@ -1,0 +1,325 @@
+{
+  "version": "3.1.0",
+  "description": "FORGE Skill Packs - Enhancement modules for your project",
+
+  "packs": {
+    "seo": {
+      "name": "SEO Pack",
+      "description": "Complete SEO toolkit for visibility and ranking",
+      "recommended_for": ["web", "landing", "saas"],
+      "skills": [
+        {
+          "name": "seo",
+          "description": "Search engine optimization basics",
+          "source": "builtin"
+        },
+        {
+          "name": "seo-meta",
+          "description": "Meta tags, Open Graph, Twitter Cards, JSON-LD",
+          "source": "builtin"
+        },
+        {
+          "name": "seo-audit",
+          "description": "Diagnose SEO issues on your site",
+          "source": "builtin"
+        },
+        {
+          "name": "schema-markup",
+          "description": "Structured data (FAQ, Product, Review schema)",
+          "source": "builtin"
+        },
+        {
+          "name": "roier-seo",
+          "description": "Lighthouse/PageSpeed audits with auto-fixes",
+          "source": "builtin"
+        },
+        {
+          "name": "programmatic-seo",
+          "description": "SEO pages at scale with templates",
+          "source": "builtin"
+        }
+      ]
+    },
+
+    "testing": {
+      "name": "Testing Pack",
+      "description": "Complete testing toolkit for quality assurance",
+      "recommended_for": ["saas", "web", "mobile", "api"],
+      "skills": [
+        {
+          "name": "e2e-testing-patterns",
+          "description": "Playwright and Cypress best practices",
+          "source": "builtin"
+        },
+        {
+          "name": "webapp-testing",
+          "description": "Playwright toolkit for web app testing",
+          "source": "builtin"
+        },
+        {
+          "name": "systematic-debugging",
+          "description": "Debug bugs before proposing fixes",
+          "source": "builtin"
+        },
+        {
+          "name": "debugging",
+          "description": "Root cause analysis and verification",
+          "source": "builtin"
+        },
+        {
+          "name": "debugging-strategies",
+          "description": "Profiling tools and debugging techniques",
+          "source": "builtin"
+        }
+      ],
+      "agents": [
+        {
+          "name": "maniac",
+          "description": "Deep testing agent - finds bugs aggressively",
+          "source": "github:agentik-os/maniac"
+        },
+        {
+          "name": "sentinel",
+          "description": "Continuous testing with checkpoints",
+          "source": "github:agentik-os/sentinel"
+        }
+      ]
+    },
+
+    "design": {
+      "name": "Design Pack",
+      "description": "UI/UX guidelines and component best practices",
+      "recommended_for": ["web", "landing", "saas", "mobile"],
+      "skills": [
+        {
+          "name": "web-design-guidelines",
+          "description": "Review UI for Web Interface Guidelines compliance",
+          "source": "builtin"
+        },
+        {
+          "name": "shadcn-ui",
+          "description": "Complete shadcn/ui component guide",
+          "source": "builtin"
+        },
+        {
+          "name": "frontend-design",
+          "description": "Production-grade UI design",
+          "source": "builtin"
+        },
+        {
+          "name": "brainstorming",
+          "description": "Explore requirements before implementation",
+          "source": "builtin"
+        }
+      ]
+    },
+
+    "performance": {
+      "name": "Performance Pack",
+      "description": "Optimize for speed and Core Web Vitals",
+      "recommended_for": ["web", "saas", "landing"],
+      "skills": [
+        {
+          "name": "vercel-react-best-practices",
+          "description": "React/Next.js optimization from Vercel Engineering",
+          "source": "builtin"
+        },
+        {
+          "name": "audit-website",
+          "description": "Squirrelscan: 150+ rules for SEO, performance, security",
+          "source": "builtin"
+        }
+      ]
+    },
+
+    "marketing": {
+      "name": "Marketing Pack",
+      "description": "Growth, conversion, and launch strategies",
+      "recommended_for": ["saas", "landing"],
+      "skills": [
+        {
+          "name": "page-cro",
+          "description": "Conversion rate optimization for landing pages",
+          "source": "builtin"
+        },
+        {
+          "name": "marketing-ideas",
+          "description": "139 proven marketing approaches",
+          "source": "builtin"
+        },
+        {
+          "name": "marketing-psychology",
+          "description": "70+ mental models for persuasion",
+          "source": "builtin"
+        },
+        {
+          "name": "launch-strategy",
+          "description": "Product Hunt, beta launches, go-to-market",
+          "source": "builtin"
+        },
+        {
+          "name": "social-content",
+          "description": "LinkedIn, Twitter/X content strategies",
+          "source": "builtin"
+        },
+        {
+          "name": "email-sequence",
+          "description": "Drip campaigns and lifecycle emails",
+          "source": "builtin"
+        }
+      ]
+    },
+
+    "convex": {
+      "name": "Convex Pack",
+      "description": "Convex backend best practices",
+      "recommended_for": ["saas", "web"],
+      "condition": "backend === 'convex'",
+      "skills": [
+        {
+          "name": "convex",
+          "description": "Umbrella skill for Convex patterns",
+          "source": "builtin"
+        },
+        {
+          "name": "convex-best-practices",
+          "description": "Production-ready Convex guidelines",
+          "source": "builtin"
+        },
+        {
+          "name": "convex-realtime",
+          "description": "Reactive apps, subscriptions, optimistic updates",
+          "source": "builtin"
+        }
+      ]
+    },
+
+    "stripe": {
+      "name": "Stripe Pack",
+      "description": "Payment integration best practices",
+      "recommended_for": ["saas"],
+      "condition": "payments === 'stripe'",
+      "skills": [
+        {
+          "name": "stripe-best-practices",
+          "description": "Stripe integration patterns",
+          "source": "builtin"
+        },
+        {
+          "name": "pricing-strategy",
+          "description": "Pricing tiers, freemium, value metrics",
+          "source": "builtin"
+        }
+      ]
+    },
+
+    "auth": {
+      "name": "Auth Pack",
+      "description": "Authentication best practices",
+      "recommended_for": ["saas", "web"],
+      "condition": "auth === 'better-auth'",
+      "skills": [
+        {
+          "name": "better-auth-best-practices",
+          "description": "Better Auth TypeScript framework",
+          "source": "builtin"
+        }
+      ]
+    },
+
+    "mobile": {
+      "name": "Mobile Pack",
+      "description": "React Native and Expo best practices",
+      "recommended_for": ["mobile"],
+      "skills": [
+        {
+          "name": "expo-tailwind-setup",
+          "description": "Tailwind CSS v4 in Expo with NativeWind",
+          "source": "builtin"
+        },
+        {
+          "name": "upgrading-expo",
+          "description": "Guidelines for SDK upgrades",
+          "source": "builtin"
+        }
+      ]
+    },
+
+    "browser": {
+      "name": "Browser Automation Pack",
+      "description": "Browser testing and automation",
+      "recommended_for": ["saas", "web"],
+      "skills": [
+        {
+          "name": "agent-browser",
+          "description": "Web testing, form filling, screenshots",
+          "source": "builtin"
+        }
+      ]
+    },
+
+    "development": {
+      "name": "Development Pack",
+      "description": "Autonomous development agents",
+      "recommended_for": ["all"],
+      "agents": [
+        {
+          "name": "ralph",
+          "description": "Autonomous AI development loop",
+          "source": "github:agentik-os/ralph"
+        },
+        {
+          "name": "bmad",
+          "description": "Agile workflows and PRD management",
+          "source": "github:agentik-os/bmad"
+        }
+      ]
+    },
+
+    "analytics": {
+      "name": "Analytics Pack",
+      "description": "Tracking and measurement setup",
+      "recommended_for": ["saas", "landing"],
+      "skills": [
+        {
+          "name": "analytics-tracking",
+          "description": "GA4, GTM, conversion tracking",
+          "source": "builtin"
+        },
+        {
+          "name": "data-storytelling",
+          "description": "Transform data into narratives",
+          "source": "builtin"
+        }
+      ]
+    },
+
+    "video": {
+      "name": "Video Pack",
+      "description": "Video creation with Remotion",
+      "recommended_for": ["video", "marketing"],
+      "skills": [
+        {
+          "name": "remotion",
+          "description": "Video creation in React",
+          "source": "builtin"
+        },
+        {
+          "name": "remotion-best-practices",
+          "description": "Remotion patterns and techniques",
+          "source": "builtin"
+        }
+      ]
+    }
+  },
+
+  "recommendations": {
+    "saas": ["seo", "testing", "design", "performance", "marketing", "development"],
+    "landing": ["seo", "design", "performance", "marketing"],
+    "web": ["seo", "testing", "design", "performance", "development"],
+    "mobile": ["testing", "design", "mobile", "development"],
+    "api": ["testing", "development"],
+    "desktop": ["testing", "design", "development"],
+    "web3": ["testing", "design", "development"]
+  }
+}
