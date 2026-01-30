@@ -13,12 +13,19 @@ GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 CYAN='\033[0;36m'
+MAGENTA='\033[0;35m'
 NC='\033[0m' # No Color
 BOLD='\033[1m'
+DIM='\033[2m'
 
 # Configuration
 CLAUDE_DIR="$HOME/.claude"
 REPO_URL="https://raw.githubusercontent.com/agentik-os/forge/main"
+
+# Selected items for installation
+SELECTED_AGENTS=()
+SELECTED_COMMANDS=()
+INSTALL_ALL_BUNDLE=""
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # Helper Functions
@@ -114,27 +121,6 @@ detect_environment() {
         if [ -d "$CLAUDE_DIR/agents" ]; then
             AGENT_COUNT=$(ls -1 "$CLAUDE_DIR/agents"/*.md 2>/dev/null | wc -l || echo "0")
             log_info "Found $AGENT_COUNT agent(s) in ~/.claude/agents/"
-
-            # List specific agents
-            if [ -f "$CLAUDE_DIR/agents/ralph.md" ] || [ -f "$CLAUDE_DIR/commands/ralph.md" ]; then
-                log_success "  → Ralph (autonomous development)"
-                RALPH_INSTALLED=true
-            fi
-
-            if [ -f "$CLAUDE_DIR/agents/maniac.md" ] || [ -f "$CLAUDE_DIR/commands/maniac.md" ]; then
-                log_success "  → MANIAC (deep testing)"
-                MANIAC_INSTALLED=true
-            fi
-
-            if [ -f "$CLAUDE_DIR/agents/sentinel.md" ] || [ -f "$CLAUDE_DIR/commands/sentinel.md" ]; then
-                log_success "  → Sentinel (continuous testing)"
-                SENTINEL_INSTALLED=true
-            fi
-
-            if [ -f "$CLAUDE_DIR/agents/bmad.md" ] || [ -f "$CLAUDE_DIR/commands/bmad.md" ]; then
-                log_success "  → BMAD (agile workflows)"
-                BMAD_INSTALLED=true
-            fi
         fi
 
         # Check for existing commands
@@ -142,32 +128,203 @@ detect_environment() {
             CMD_COUNT=$(ls -1 "$CLAUDE_DIR/commands"/*.md 2>/dev/null | wc -l || echo "0")
             log_info "Found $CMD_COUNT command(s) in ~/.claude/commands/"
         fi
-
-        # Check for templates
-        if [ -d "$CLAUDE_DIR/templates" ]; then
-            log_success "Templates directory exists"
-        fi
     else
         log_warning "~/.claude/ not found - will create"
     fi
-
-    # Detect project structure
-    echo ""
-    echo -e "${BOLD}📁 Project Directories:${NC}"
-
-    # Common project locations
-    for dir in "$HOME/projects" "$HOME/work" "$HOME/clients" "$HOME/VibeCoding" "$HOME/code" "$HOME/dev"; do
-        if [ -d "$dir" ]; then
-            PROJECT_COUNT=$(ls -d "$dir"/*/ 2>/dev/null | wc -l || echo "0")
-            log_success "$dir ($PROJECT_COUNT projects)"
-        fi
-    done
 
     echo ""
 }
 
 # ═══════════════════════════════════════════════════════════════════════════════
-# Installation
+# Catalog Functions
+# ═══════════════════════════════════════════════════════════════════════════════
+
+check_if_installed() {
+    local item_type="$1"
+    local item_id="$2"
+
+    if [ "$item_type" = "agent" ]; then
+        if [ -f "$CLAUDE_DIR/agents/${item_id}.md" ]; then
+            return 0
+        fi
+    elif [ "$item_type" = "command" ]; then
+        if [ -f "$CLAUDE_DIR/commands/${item_id}.md" ]; then
+            return 0
+        fi
+    fi
+    return 1
+}
+
+show_catalog_menu() {
+    echo ""
+    echo -e "${BOLD}╔══════════════════════════════════════════════════════════════╗${NC}"
+    echo -e "${BOLD}║  🎯 FORGE CATALOG - Optional Add-ons                         ║${NC}"
+    echo -e "${BOLD}╚══════════════════════════════════════════════════════════════╝${NC}"
+    echo ""
+    echo -e "${DIM}FORGE comes with the core command. You can also install additional${NC}"
+    echo -e "${DIM}agents and commands to enhance your Claude Code experience.${NC}"
+    echo ""
+    echo -e "  ${CYAN}1)${NC} ${BOLD}Starter Bundle${NC} - Essential agents for any project"
+    echo -e "     ${DIM}Includes: code-reviewer, debugger, typescript-pro${NC}"
+    echo ""
+    echo -e "  ${CYAN}2)${NC} ${BOLD}Fullstack Bundle${NC} - Complete web development setup"
+    echo -e "     ${DIM}Includes: nextjs-developer, react-specialist, shadcn-ui-expert, + testing${NC}"
+    echo ""
+    echo -e "  ${CYAN}3)${NC} ${BOLD}SaaS Bundle${NC} - Everything for building SaaS products"
+    echo -e "     ${DIM}Includes: convex-expert, stripe-expert, clerk-expert, + deployment${NC}"
+    echo ""
+    echo -e "  ${CYAN}4)${NC} ${BOLD}Mobile Bundle${NC} - React Native / Expo development"
+    echo -e "     ${DIM}Includes: mobile-developer, react-specialist, + testing${NC}"
+    echo ""
+    echo -e "  ${CYAN}5)${NC} ${BOLD}Custom Selection${NC} - Choose individual agents and commands"
+    echo ""
+    echo -e "  ${CYAN}6)${NC} ${BOLD}Skip${NC} - Install FORGE only (you can add more later)"
+    echo ""
+    read -p "Choose an option [1-6]: " catalog_choice
+
+    case $catalog_choice in
+        1) select_bundle "starter" ;;
+        2) select_bundle "fullstack" ;;
+        3) select_bundle "saas" ;;
+        4) select_bundle "mobile" ;;
+        5) custom_selection ;;
+        6) log_info "Skipping catalog add-ons..." ;;
+        *) log_warning "Invalid choice, skipping catalog..." ;;
+    esac
+}
+
+select_bundle() {
+    local bundle="$1"
+    INSTALL_ALL_BUNDLE="$bundle"
+
+    case $bundle in
+        "starter")
+            SELECTED_AGENTS=("code-reviewer" "debugger" "typescript-pro")
+            SELECTED_COMMANDS=("verify")
+            ;;
+        "fullstack")
+            SELECTED_AGENTS=("nextjs-developer" "react-specialist" "typescript-pro" "code-reviewer" "debugger" "test-automator" "shadcn-ui-expert")
+            SELECTED_COMMANDS=("verify" "responsive")
+            ;;
+        "saas")
+            SELECTED_AGENTS=("nextjs-developer" "convex-expert" "stripe-expert" "clerk-expert" "code-reviewer" "debugger" "deployment-engineer")
+            SELECTED_COMMANDS=("verify" "responsive")
+            ;;
+        "mobile")
+            SELECTED_AGENTS=("mobile-developer" "react-specialist" "typescript-pro" "debugger" "test-automator")
+            SELECTED_COMMANDS=("verify")
+            ;;
+    esac
+
+    echo ""
+    log_success "Selected ${bundle} bundle"
+    echo -e "   ${DIM}Agents: ${SELECTED_AGENTS[*]}${NC}"
+    echo -e "   ${DIM}Commands: ${SELECTED_COMMANDS[*]}${NC}"
+}
+
+custom_selection() {
+    echo ""
+    echo -e "${BOLD}═══════════════════════════════════════════════════════════════${NC}"
+    echo -e "${BOLD}  📦 AVAILABLE AGENTS${NC}"
+    echo -e "${BOLD}═══════════════════════════════════════════════════════════════${NC}"
+    echo ""
+
+    # Development Agents
+    echo -e "${MAGENTA}Development:${NC}"
+    show_agent_option "nextjs-developer" "Next.js Developer" "App Router, Server Components, React Compiler"
+    show_agent_option "react-specialist" "React Specialist" "Hooks, patterns, performance optimization"
+    show_agent_option "typescript-pro" "TypeScript Pro" "Type-safe code, generics, advanced patterns"
+    show_agent_option "mobile-developer" "Mobile Developer" "React Native and Expo expert"
+    echo ""
+
+    # Backend Agents
+    echo -e "${MAGENTA}Backend:${NC}"
+    show_agent_option "convex-expert" "Convex Expert" "Schema, queries, mutations, real-time"
+    show_agent_option "stripe-expert" "Stripe Expert" "Payments, subscriptions, webhooks"
+    show_agent_option "clerk-expert" "Clerk Expert" "Auth, user management, organizations"
+    echo ""
+
+    # Quality Agents
+    echo -e "${MAGENTA}Quality:${NC}"
+    show_agent_option "code-reviewer" "Code Reviewer" "Quality, security, best practices"
+    show_agent_option "debugger" "Debugger" "Root cause analysis, problem-solving"
+    show_agent_option "test-automator" "Test Automator" "Unit, integration, E2E tests"
+    echo ""
+
+    # DevOps Agents
+    echo -e "${MAGENTA}DevOps:${NC}"
+    show_agent_option "deployment-engineer" "Deployment Engineer" "CI/CD, Docker, cloud deployment"
+    show_agent_option "git-workflow-manager" "Git Workflow Manager" "Branching, PR workflows, releases"
+    echo ""
+
+    # UI Agents
+    echo -e "${MAGENTA}UI/Design:${NC}"
+    show_agent_option "shadcn-ui-expert" "shadcn/ui Expert" "Components, theming, accessibility"
+    show_agent_option "documentation-engineer" "Documentation Engineer" "API docs, guides, READMEs"
+    echo ""
+
+    echo -e "${DIM}Enter agent IDs separated by spaces (e.g., 'nextjs-developer code-reviewer'):${NC}"
+    read -p "> " agent_input
+
+    if [ -n "$agent_input" ]; then
+        IFS=' ' read -ra SELECTED_AGENTS <<< "$agent_input"
+    fi
+
+    echo ""
+    echo -e "${BOLD}═══════════════════════════════════════════════════════════════${NC}"
+    echo -e "${BOLD}  📋 AVAILABLE COMMANDS${NC}"
+    echo -e "${BOLD}═══════════════════════════════════════════════════════════════${NC}"
+    echo ""
+
+    show_command_option "verify" "/verify" "Quick verification - console, network, screenshots"
+    show_command_option "responsive" "/responsive" "Test responsive design across breakpoints"
+    echo ""
+
+    echo -e "${DIM}Enter command IDs separated by spaces (e.g., 'verify responsive'):${NC}"
+    read -p "> " command_input
+
+    if [ -n "$command_input" ]; then
+        IFS=' ' read -ra SELECTED_COMMANDS <<< "$command_input"
+    fi
+
+    echo ""
+    if [ ${#SELECTED_AGENTS[@]} -gt 0 ] || [ ${#SELECTED_COMMANDS[@]} -gt 0 ]; then
+        log_success "Custom selection complete"
+        [ ${#SELECTED_AGENTS[@]} -gt 0 ] && echo -e "   ${DIM}Agents: ${SELECTED_AGENTS[*]}${NC}"
+        [ ${#SELECTED_COMMANDS[@]} -gt 0 ] && echo -e "   ${DIM}Commands: ${SELECTED_COMMANDS[*]}${NC}"
+    else
+        log_info "No add-ons selected"
+    fi
+}
+
+show_agent_option() {
+    local id="$1"
+    local name="$2"
+    local desc="$3"
+
+    if check_if_installed "agent" "$id"; then
+        echo -e "   ${GREEN}✓${NC} ${DIM}${id}${NC} - ${name} ${GREEN}(installed)${NC}"
+    else
+        echo -e "   ${CYAN}○${NC} ${BOLD}${id}${NC} - ${name}"
+        echo -e "     ${DIM}${desc}${NC}"
+    fi
+}
+
+show_command_option() {
+    local id="$1"
+    local name="$2"
+    local desc="$3"
+
+    if check_if_installed "command" "$id"; then
+        echo -e "   ${GREEN}✓${NC} ${DIM}${id}${NC} - ${name} ${GREEN}(installed)${NC}"
+    else
+        echo -e "   ${CYAN}○${NC} ${BOLD}${id}${NC} - ${name}"
+        echo -e "     ${DIM}${desc}${NC}"
+    fi
+}
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# Installation Functions
 # ═══════════════════════════════════════════════════════════════════════════════
 
 create_directories() {
@@ -185,9 +342,9 @@ download_file() {
     local dest="$2"
 
     if command -v curl &> /dev/null; then
-        curl -fsSL "$url" -o "$dest"
+        curl -fsSL "$url" -o "$dest" 2>/dev/null
     elif command -v wget &> /dev/null; then
-        wget -q "$url" -O "$dest"
+        wget -q "$url" -O "$dest" 2>/dev/null
     else
         log_error "Neither curl nor wget found. Please install one."
         exit 1
@@ -195,16 +352,11 @@ download_file() {
 }
 
 install_forge() {
-    log_info "Installing FORGE v3.1..."
+    log_info "Installing FORGE v3.1 core..."
     echo ""
 
-    # Download agent definition
-    log_info "Downloading agent definition..."
-    download_file "$REPO_URL/agents/forge.md" "$CLAUDE_DIR/agents/forge.md"
-    log_success "Agent installed: ~/.claude/agents/forge.md"
-
-    # Download command definition
-    log_info "Downloading command definition..."
+    # Download command definition (main FORGE command)
+    log_info "Downloading FORGE command..."
     download_file "$REPO_URL/commands/forge.md" "$CLAUDE_DIR/commands/forge.md"
     log_success "Command installed: ~/.claude/commands/forge.md"
 
@@ -218,6 +370,58 @@ install_forge() {
     echo ""
 }
 
+install_selected_items() {
+    local installed_agents=0
+    local installed_commands=0
+    local skipped=0
+
+    # Install selected agents
+    if [ ${#SELECTED_AGENTS[@]} -gt 0 ]; then
+        echo ""
+        log_info "Installing selected agents..."
+
+        for agent in "${SELECTED_AGENTS[@]}"; do
+            if check_if_installed "agent" "$agent"; then
+                echo -e "   ${DIM}Skipping ${agent} (already installed)${NC}"
+                ((skipped++))
+            else
+                if download_file "$REPO_URL/catalog/agents/${agent}.md" "$CLAUDE_DIR/agents/${agent}.md"; then
+                    log_success "Installed: ${agent}"
+                    ((installed_agents++))
+                else
+                    log_warning "Failed to download: ${agent}"
+                fi
+            fi
+        done
+    fi
+
+    # Install selected commands
+    if [ ${#SELECTED_COMMANDS[@]} -gt 0 ]; then
+        echo ""
+        log_info "Installing selected commands..."
+
+        for cmd in "${SELECTED_COMMANDS[@]}"; do
+            if check_if_installed "command" "$cmd"; then
+                echo -e "   ${DIM}Skipping ${cmd} (already installed)${NC}"
+                ((skipped++))
+            else
+                if download_file "$REPO_URL/catalog/commands/${cmd}.md" "$CLAUDE_DIR/commands/${cmd}.md"; then
+                    log_success "Installed: /${cmd}"
+                    ((installed_commands++))
+                else
+                    log_warning "Failed to download: ${cmd}"
+                fi
+            fi
+        done
+    fi
+
+    if [ $installed_agents -gt 0 ] || [ $installed_commands -gt 0 ]; then
+        echo ""
+        log_success "Installed ${installed_agents} agent(s), ${installed_commands} command(s)"
+        [ $skipped -gt 0 ] && echo -e "   ${DIM}Skipped ${skipped} item(s) (already installed)${NC}"
+    fi
+}
+
 # ═══════════════════════════════════════════════════════════════════════════════
 # Post-Installation Summary
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -229,33 +433,32 @@ print_summary() {
     echo -e "${GREEN}═══════════════════════════════════════════════════════════════════════════════${NC}"
     echo ""
 
-    echo -e "${BOLD}📁 Files Installed:${NC}"
-    echo "   ~/.claude/agents/forge.md"
+    echo -e "${BOLD}📁 Core Files Installed:${NC}"
     echo "   ~/.claude/commands/forge.md"
     echo "   ~/.claude/templates/themes/minimal-light.css"
     echo "   ~/.claude/templates/themes/dark-techy.css"
     echo "   ~/.claude/templates/themes/vibrant-purple.css"
     echo ""
 
-    echo -e "${BOLD}🤖 Agent Integration:${NC}"
-    if [ "$RALPH_INSTALLED" = true ]; then
-        echo -e "   ${GREEN}✓${NC} Ralph - FORGE will create @fix_plan.md for autonomous dev"
-    else
-        echo -e "   ${YELLOW}○${NC} Ralph - Not installed (optional)"
+    if [ ${#SELECTED_AGENTS[@]} -gt 0 ]; then
+        echo -e "${BOLD}🤖 Agents Installed:${NC}"
+        for agent in "${SELECTED_AGENTS[@]}"; do
+            if [ -f "$CLAUDE_DIR/agents/${agent}.md" ]; then
+                echo -e "   ${GREEN}✓${NC} ${agent}"
+            fi
+        done
+        echo ""
     fi
 
-    if [ "$MANIAC_INSTALLED" = true ]; then
-        echo -e "   ${GREEN}✓${NC} MANIAC - FORGE will create USER-STORIES.md for testing"
-    else
-        echo -e "   ${YELLOW}○${NC} MANIAC - Not installed (optional)"
+    if [ ${#SELECTED_COMMANDS[@]} -gt 0 ]; then
+        echo -e "${BOLD}📋 Commands Installed:${NC}"
+        for cmd in "${SELECTED_COMMANDS[@]}"; do
+            if [ -f "$CLAUDE_DIR/commands/${cmd}.md" ]; then
+                echo -e "   ${GREEN}✓${NC} /${cmd}"
+            fi
+        done
+        echo ""
     fi
-
-    if [ "$SENTINEL_INSTALLED" = true ]; then
-        echo -e "   ${GREEN}✓${NC} Sentinel - FORGE will set up .sentinel/ directory"
-    else
-        echo -e "   ${YELLOW}○${NC} Sentinel - Not installed (optional)"
-    fi
-    echo ""
 
     echo -e "${BOLD}🚀 Usage:${NC}"
     echo ""
@@ -271,6 +474,7 @@ print_summary() {
     echo "      → Research the market (optional)"
     echo "      → Generate a PRD"
     echo "      → Ask EVERY technical question"
+    echo "      → Recommend Skill Packs"
     echo "      → Scaffold your project"
     echo ""
 
@@ -284,6 +488,11 @@ print_summary() {
 
     echo -e "${YELLOW}💡 Tip: FORGE asks EVERY question - nothing is assumed!${NC}"
     echo ""
+
+    if [ ${#SELECTED_AGENTS[@]} -eq 0 ] && [ ${#SELECTED_COMMANDS[@]} -eq 0 ]; then
+        echo -e "${DIM}Want more? Re-run the installer anytime to add agents and commands.${NC}"
+        echo ""
+    fi
 }
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -301,6 +510,13 @@ main() {
 
     create_directories
     install_forge
+
+    # Show catalog menu for optional add-ons
+    show_catalog_menu
+
+    # Install selected items
+    install_selected_items
+
     print_summary
 }
 

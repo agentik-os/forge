@@ -1,0 +1,170 @@
+{
+  "version": "1.0.0",
+  "description": "FORGE Installable Catalog - Agents, Commands, and Skills for Claude Code",
+
+  "agents": {
+    "development": [
+      {
+        "id": "nextjs-developer",
+        "name": "Next.js Developer",
+        "description": "Expert Next.js developer with App Router, Server Components, and React Compiler knowledge",
+        "file": "catalog/agents/nextjs-developer.md",
+        "recommended_for": ["web", "saas", "landing"]
+      },
+      {
+        "id": "react-specialist",
+        "name": "React Specialist",
+        "description": "Deep React expertise including hooks, patterns, performance optimization",
+        "file": "catalog/agents/react-specialist.md",
+        "recommended_for": ["web", "saas"]
+      },
+      {
+        "id": "typescript-pro",
+        "name": "TypeScript Pro",
+        "description": "TypeScript expert for type-safe code, generics, and advanced patterns",
+        "file": "catalog/agents/typescript-pro.md",
+        "recommended_for": ["all"]
+      },
+      {
+        "id": "mobile-developer",
+        "name": "Mobile Developer",
+        "description": "React Native and Expo expert for cross-platform mobile development",
+        "file": "catalog/agents/mobile-developer.md",
+        "recommended_for": ["mobile"]
+      }
+    ],
+    "backend": [
+      {
+        "id": "convex-expert",
+        "name": "Convex Expert",
+        "description": "Convex backend specialist - schema design, queries, mutations, real-time subscriptions",
+        "file": "catalog/agents/convex-expert.md",
+        "recommended_for": ["saas", "web"],
+        "requires": "convex backend"
+      },
+      {
+        "id": "stripe-expert",
+        "name": "Stripe Expert",
+        "description": "Stripe payment integration - subscriptions, checkout, webhooks, billing",
+        "file": "catalog/agents/stripe-expert.md",
+        "recommended_for": ["saas"],
+        "requires": "stripe payments"
+      },
+      {
+        "id": "clerk-expert",
+        "name": "Clerk Expert",
+        "description": "Clerk authentication - user management, organizations, webhooks, middleware",
+        "file": "catalog/agents/clerk-expert.md",
+        "recommended_for": ["saas", "web"],
+        "requires": "clerk auth"
+      }
+    ],
+    "quality": [
+      {
+        "id": "code-reviewer",
+        "name": "Code Reviewer",
+        "description": "Expert code reviewer for quality, security vulnerabilities, and best practices",
+        "file": "catalog/agents/code-reviewer.md",
+        "recommended_for": ["all"]
+      },
+      {
+        "id": "debugger",
+        "name": "Debugger",
+        "description": "Systematic debugging expert - root cause analysis, profiling, problem-solving",
+        "file": "catalog/agents/debugger.md",
+        "recommended_for": ["all"]
+      },
+      {
+        "id": "test-automator",
+        "name": "Test Automator",
+        "description": "Testing specialist - unit tests, integration tests, E2E with Playwright",
+        "file": "catalog/agents/test-automator.md",
+        "recommended_for": ["all"]
+      }
+    ],
+    "devops": [
+      {
+        "id": "deployment-engineer",
+        "name": "Deployment Engineer",
+        "description": "CI/CD, Docker, Kubernetes, cloud deployment specialist",
+        "file": "catalog/agents/deployment-engineer.md",
+        "recommended_for": ["saas", "api"]
+      },
+      {
+        "id": "git-workflow-manager",
+        "name": "Git Workflow Manager",
+        "description": "Git expert - branching strategies, PR workflows, release management",
+        "file": "catalog/agents/git-workflow-manager.md",
+        "recommended_for": ["all"]
+      }
+    ],
+    "ui": [
+      {
+        "id": "shadcn-ui-expert",
+        "name": "shadcn/ui Expert",
+        "description": "Complete shadcn/ui guide - components, theming, accessibility patterns",
+        "file": "catalog/agents/shadcn-ui-expert.md",
+        "recommended_for": ["web", "saas", "landing"]
+      },
+      {
+        "id": "documentation-engineer",
+        "name": "Documentation Engineer",
+        "description": "Technical writing expert - API docs, guides, READMEs",
+        "file": "catalog/agents/documentation-engineer.md",
+        "recommended_for": ["all"]
+      }
+    ]
+  },
+
+  "commands": {
+    "testing": [
+      {
+        "id": "verify",
+        "name": "/verify",
+        "description": "Quick verification - console errors, network, screenshots",
+        "file": "catalog/commands/verify.md"
+      },
+      {
+        "id": "responsive",
+        "name": "/responsive",
+        "description": "Test responsive design across breakpoints",
+        "file": "catalog/commands/responsive.md"
+      }
+    ]
+  },
+
+  "bundles": {
+    "starter": {
+      "name": "Starter Bundle",
+      "description": "Essential agents for any project",
+      "agents": ["code-reviewer", "debugger", "typescript-pro"],
+      "commands": ["verify"]
+    },
+    "fullstack": {
+      "name": "Fullstack Bundle",
+      "description": "Complete web development setup",
+      "agents": ["nextjs-developer", "react-specialist", "typescript-pro", "code-reviewer", "debugger", "test-automator", "shadcn-ui-expert"],
+      "commands": ["verify", "responsive"]
+    },
+    "saas": {
+      "name": "SaaS Bundle",
+      "description": "Everything for building SaaS products",
+      "agents": ["nextjs-developer", "convex-expert", "stripe-expert", "clerk-expert", "code-reviewer", "debugger", "deployment-engineer"],
+      "commands": ["verify", "responsive"]
+    },
+    "mobile": {
+      "name": "Mobile Bundle",
+      "description": "React Native / Expo development",
+      "agents": ["mobile-developer", "react-specialist", "typescript-pro", "debugger", "test-automator"],
+      "commands": ["verify"]
+    }
+  },
+
+  "recommendations": {
+    "saas": ["fullstack", "saas"],
+    "landing": ["starter", "fullstack"],
+    "web": ["starter", "fullstack"],
+    "mobile": ["starter", "mobile"],
+    "api": ["starter"]
+  }
+}
